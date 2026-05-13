@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
 import QRCode from "qrcode";
-import { AlertTriangle, BadgeCheck, ArrowUpRight } from "lucide-react";
+import { AlertTriangle, BadgeCheck, ArrowUpRight, Trophy } from "lucide-react";
 import { CertificateTypeBadge } from "@/components/certificate-type-badge";
 import { ConfettiTrigger } from "@/components/confetti-trigger";
 import { DownloadCertificateButton } from "@/components/download-certificate-button";
@@ -180,25 +180,25 @@ export default async function VerifyPage({ params }: VerifyPageProps) {
                 </div>
                 <div className="flex flex-col gap-1 border-b border-muted/40 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                   <span className="shrink-0 text-muted-foreground">Holder name</span>
-                  <span className="font-semibold break-words text-foreground text-left sm:text-right">
+                  <span className="font-semibold wrap-break-word text-foreground text-left sm:text-right">
                     {payload?.certificate.holderName}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1 border-b border-muted/40 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                   <span className="shrink-0 text-muted-foreground">Roll number</span>
-                  <span className="font-semibold break-words text-foreground text-left sm:text-right">
+                  <span className="font-semibold wrap-break-word text-foreground text-left sm:text-right">
                     {payload?.certificate.rollNumber}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1 border-b border-muted/40 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                   <span className="shrink-0 text-muted-foreground">Branch</span>
-                  <span className="font-semibold break-words text-foreground text-left sm:text-right">
+                  <span className="font-semibold wrap-break-word text-foreground text-left sm:text-right">
                     {payload?.certificate.branch}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1 border-b border-muted/40 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                   <span className="shrink-0 text-muted-foreground">Event</span>
-                  <span className="font-semibold break-words text-foreground text-left sm:text-right">
+                  <span className="font-semibold wrap-break-word text-foreground text-left sm:text-right">
                     {payload?.event.name}
                   </span>
                 </div>
@@ -220,7 +220,7 @@ export default async function VerifyPage({ params }: VerifyPageProps) {
                 </div>
                 <div className="flex flex-col gap-1 border-b border-muted/40 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                   <span className="shrink-0 text-muted-foreground">Issued by</span>
-                  <span className="font-semibold break-words text-foreground text-left sm:text-right">
+                  <span className="font-semibold wrap-break-word text-foreground text-left sm:text-right">
                     Google Developer Group RIT Roorkee
                   </span>
                 </div>
@@ -232,13 +232,13 @@ export default async function VerifyPage({ params }: VerifyPageProps) {
                 {payload?.event.venue ? (
                   <div className="flex flex-col gap-1 border-b border-muted/40 pb-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                     <span className="shrink-0 text-muted-foreground">Venue</span>
-                    <span className="font-semibold break-words text-foreground text-left sm:text-right">
+                    <span className="font-semibold wrap-break-word text-foreground text-left sm:text-right">
                       {payload.event.venue}
                     </span>
                   </div>
                 ) : null}
                 {payload?.event.description ? (
-                  <div className="rounded-2xl border border-muted/40 bg-muted/30 p-4 text-sm break-words text-muted-foreground">
+                  <div className="rounded-2xl border border-muted/40 bg-muted/30 p-4 text-sm wrap-break-word text-muted-foreground">
                     {payload.event.description}
                   </div>
                 ) : null}
@@ -255,7 +255,7 @@ export default async function VerifyPage({ params }: VerifyPageProps) {
               </div>
             </div>
 
-            <div className="flex flex-col gap-6">
+            <div data-export-hide className="flex flex-col gap-6">
               {isValid && !isRevoked ? (
                 payload?.certificate.certificateType === "WINNER" ? (
                   <WinnerCelebration
@@ -273,6 +273,91 @@ export default async function VerifyPage({ params }: VerifyPageProps) {
                     </p>
                     <div className="mt-4">
                       <ConfettiTrigger autoPlay label="Throw confetti" />
+                    </div>
+                  </div>
+                )
+              ) : null}
+
+              {isRevoked ? (
+                <div className="flex items-center gap-2 rounded-3xl border border-(--gdg-red)/30 bg-(--gdg-red)/10 px-4 py-4 text-sm text-(--gdg-red)">
+                  <AlertTriangle className="size-4" />
+                  This certificate has been revoked by the chapter admins.
+                </div>
+              ) : null}
+
+              <div className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-sm">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                      Shareable QR
+                    </p>
+                    <h4 className="mt-2 font-heading text-xl text-foreground">
+                      Scan to verify
+                    </h4>
+                  </div>
+                  <BadgeCheck className="hidden size-6 text-(--gdg-green) sm:block" />
+                </div>
+                <div className="mt-4 flex flex-col items-center gap-6 sm:flex-row sm:items-start">
+                  <Image
+                    src={qrCode}
+                    alt="Verification QR code"
+                    width={140}
+                    height={140}
+                    className="shrink-0 rounded-2xl border border-muted/40 bg-white p-2"
+                    unoptimized
+                  />
+                  <div className="text-center sm:text-left">
+                    <p className="text-sm text-muted-foreground">
+                      Share this QR code alongside the certificate to let others
+                      verify instantly.
+                    </p>
+                    <Link
+                      href={verifyUrl}
+                      className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-(--gdg-blue)"
+                    >
+                      Open verification link
+                      <ArrowUpRight className="size-4" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div data-export-only className="hidden flex-col gap-6">
+              {isValid && !isRevoked ? (
+                payload?.certificate.certificateType === "WINNER" ? (
+                  <div className="rounded-[2rem] border border-amber-400/25 bg-[linear-gradient(135deg,rgba(255,251,235,0.95),rgba(255,247,214,0.88),rgba(255,255,255,0.92))] p-6 shadow-[0_24px_80px_rgba(245,158,11,0.16)]">
+                    <div className="flex flex-col gap-4">
+                      <div className="inline-flex size-14 items-center justify-center rounded-2xl bg-amber-400/18 text-amber-700">
+                        <Trophy className="size-7" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-700/80">
+                          Achievement unlocked
+                        </p>
+                        <h2 className="mt-3 font-heading text-3xl text-foreground">
+                          Congratulations on your achievement
+                        </h2>
+                        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+                          Your certificate confirms a standout result in {payload.event.name}. Share it proudly and celebrate what you earned.
+                        </p>
+                      </div>
+                      <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/25 bg-amber-400/14 px-4 py-2 text-sm font-semibold text-amber-700">
+                        <Trophy className="size-4" />
+                        {awardLabel || "Winner"}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-3xl border border-white/70 bg-white/90 p-6 shadow-sm">
+                    <h3 className="font-heading text-xl text-foreground">
+                      Celebrate the verification
+                    </h3>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      This certificate is verified and ready to share. Throw some confetti or send the link below.
+                    </p>
+                    <div className="mt-4">
+                      <ConfettiTrigger autoPlay={false} label="Throw confetti" />
                     </div>
                   </div>
                 )
